@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       Gravity Find a Rep
- * Plugin URI:        https://github.com/JackRie/Gravity-Find-A-Rep
+ * Plugin Name:       Armstrong Gravity Find a Rep
+ * Plugin URI:        https://github.com/JackRie/Armstrong-Gravity-Find-A-Rep
  * Description:       Integrate Gravity form with 3rd party API call to display find a rep information.
  * Version:           1.0.0
  * Requires at least: 5.2
@@ -22,7 +22,8 @@ define( 'GRAVFR_DIR', dirname(__FILE__).'/' );
 class GravityFindARep {
 
     function __construct() {
-        add_filter('gform_confirmation_1', array($this, 'custom_confirmation'), 10, 4);
+        $form_id = get_option('gravfr-form-id');
+        add_filter("gform_confirmation_{$form_id}", array($this, 'custom_confirmation'), 10, 4);
         add_action('admin_menu', array($this, 'add_admin_page'));
         add_action('admin_init', array($this, 'settings_fields') );
     }
@@ -49,6 +50,11 @@ class GravityFindARep {
         // Password
         add_settings_field('gravfr-password', 'Password', array($this, 'textInputHtml'), 'gravfr-settings-page', 'gravfr_section', array('name' => 'gravfr-password'));
         register_setting('armfrplugin', 'gravfr-password', array('sanitize_callback' => 'sanitize_text_field', 'default' => NULL));
+        // Form Settings
+        add_settings_section( 'gravfr_form_section', "Form Settings", null, 'gravfr-settings-page' );
+        // Form ID Number
+        add_settings_field('gravfr-form-id', 'Form Id', array($this, 'textInputHtml'), 'gravfr-settings-page', 'gravfr_form_section', array('name' => 'gravfr-form-id'));
+        register_setting('armfrplugin', 'gravfr-form-id', array('sanitize_callback' => 'sanitize_text_field', 'default' => NULL));
     }
     // Use This Function for Text Inputs
     function textInputHtml($args) { ?>
